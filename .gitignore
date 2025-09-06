@@ -1,4 +1,9 @@
-# Ignore dataset and large files
+# Ignore dataset files
 data/HAM10000_images/
 data/HAM10000_metadata.csv
 data/skin-cancer-mnist-ham10000.zip
+
+# Ignore Python environment files
+__pycache__/
+*.pyc
+.env
