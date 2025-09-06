@@ -1,0 +1,19 @@
+# Ignore datasets
+data/HAM10000_images/
+data/skin-cancer-mnist-ham10000.zip
+data/HAM10000_metadata.csv
+
+# Ignore environment and Python cache files
+*.env
+*.pyc
+__pycache__/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore VS Code workspace settings
+.vscode/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
