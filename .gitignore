@@ -1,4 +1,43 @@
-*.h5
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.env
+venv/
+env/
+data/CODE/env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Data (large files — not tracked in source control)
+data/images/
 *.zip
-*.csv
-data/CODE/env
+
+# Model artifacts (reproduced via training script)
+*.keras
+*.h5
+
+# Test & agent caches
+.pytest_cache/
+.agents/
+ORIGINAL_REQUEST.md
+
+# Credentials (NEVER commit)
+.kaggle/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/

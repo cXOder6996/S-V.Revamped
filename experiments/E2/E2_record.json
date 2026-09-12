@@ -1,0 +1,295 @@
+{
+  "experiment_id": "E2",
+  "timestamp_utc": "2026-09-12T15:39:53.448136+00:00",
+  "python_version": "3.12.3",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "config": {
+    "augmentation": {
+      "enabled": false
+    },
+    "data": {
+      "image_dir": "",
+      "metadata_path": "",
+      "n_splits": 7,
+      "seed": 42,
+      "split_method": "StratifiedGroupKFold",
+      "test_fold": 0,
+      "val_fold": 1
+    },
+    "experiment_id": "E2",
+    "model": {
+      "architecture": "EfficientNetB0",
+      "input_size": [
+        32,
+        32
+      ],
+      "num_classes": 7,
+      "pretrained": null
+    },
+    "training": {
+      "batch_size": 16,
+      "callbacks": {
+        "early_stopping": {
+          "monitor": "val_loss",
+          "patience": 5,
+          "restore_best_weights": true
+        },
+        "reduce_lr": {
+          "factor": 0.5,
+          "min_lr": 1e-07,
+          "monitor": "val_loss",
+          "patience": 3
+        }
+      },
+      "class_weights": false,
+      "cosine_decay": {
+        "alpha": 1e-06,
+        "t_0": 2,
+        "t_mul": 2.0
+      },
+      "fine_tuning": {
+        "enabled": true,
+        "phases": [
+          {
+            "epochs": 1,
+            "lr": 0.0001,
+            "unfreeze_layers": 10
+          }
+        ]
+      },
+      "focal_gamma": 2.0,
+      "focal_loss": true,
+      "frozen_epochs": 1,
+      "initial_lr": 0.001,
+      "label_smoothing": 0.0,
+      "loss": "categorical_crossentropy",
+      "lr_scheduler": "cosine",
+      "optimizer": "adam"
+    }
+  },
+  "backbone_total_layers": 238,
+  "unfreeze_fraction_pct": 4.2,
+  "metrics": {
+    "val_macro_f1": 0.0,
+    "val_balanced_acc": 0.0,
+    "val_overall_acc": 0.0,
+    "val_weighted_f1": 0.0,
+    "mel_recall": 0.0,
+    "mel_f1": 0.0,
+    "df_recall": 0.0,
+    "ece": 0.19776879996061325,
+    "vs_e1_macro_f1_delta": -0.617
+  },
+  "resources": {
+    "training_time_seconds": 43.6,
+    "training_time_min": 0.73,
+    "model_size_mb": 16.29,
+    "model_path": "K:\\I.T\\PROJECTS\\SkinVision\\models\\best_model.keras",
+    "inference_latency_p50_ms": 100.67,
+    "inference_latency_p95_ms": 148.94
+  },
+  "notes": "Automated E2E CLI test",
+  "full_eval": {
+    "macro_f1": 0.0,
+    "balanced_accuracy": 0.0,
+    "accuracy": 0.0,
+    "primary_metrics": {
+      "balanced_accuracy": 0.0,
+      "macro_f1": 0.0,
+      "weighted_f1": 0.0,
+      "classification_report": {
+        "akiec": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "bcc": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "bkl": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "df": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "mel": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "nv": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 2.0
+        },
+        "vasc": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 1.0
+        },
+        "accuracy": 0.0,
+        "macro avg": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 10.0
+        },
+        "weighted avg": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1-score": 0.0,
+          "support": 10.0
+        }
+      }
+    },
+    "secondary_metrics": {
+      "overall_accuracy": 0.0,
+      "confusion_matrix_absolute": [
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ]
+      ],
+      "confusion_matrix_normalized": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "calibration": {
+      "expected_calibration_error": 0.19776879996061325
+    }
+  }
+}

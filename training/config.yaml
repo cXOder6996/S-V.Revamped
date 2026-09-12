@@ -1,0 +1,89 @@
+experiment_id: "E1"  # Active experiment identifier (E1-E8)
+
+data:
+  metadata_path: ""  # Set via CLI or env var
+  image_dir: ""      # Set via CLI or env var
+  split_method: "StratifiedGroupKFold"
+  n_splits: 7
+  test_fold: 0
+  val_fold: 1
+  seed: 42           # Base random seed
+
+model:
+  architecture: "EfficientNetB0"  # E4: EfficientNetB0, EfficientNetB3, EfficientNetB4, EfficientNetV2S
+  input_size: [224, 224]          # E3: [224, 224], [300, 300], [380, 380]
+  num_classes: 7
+  pretrained: "imagenet"
+  head:
+    - type: "GlobalAveragePooling2D"
+    - type: "Dropout"
+      rate: 0.3
+    - type: "Dense"
+      units: 7
+      activation: "softmax"
+
+training:
+  batch_size: 32
+  optimizer: "adam"
+  initial_lr: 0.001
+  loss: "categorical_crossentropy"
+  class_weights: true             # E0-E1: false, E2+: true (balanced)
+  label_smoothing: 0.0            # E6a: 0.05 or 0.1
+  focal_loss: false               # E5/E6b: true
+  focal_gamma: 2.0                # E5: focal loss focusing parameter (default 2.0)
+  lr_scheduler: "reduce_lr"       # E7: "reduce_lr" or "cosine"
+  
+  cosine_decay:                   # E7: CosineDecayRestarts parameters
+    t_0: 10
+    t_mul: 2.0
+    alpha: 1.0e-6
+  
+  frozen_epochs: 15               # E1-E8
+  
+  fine_tuning:
+    enabled: true                 # Two-stage transfer learning
+    phases:
+      - unfreeze_layers: 20       # E2: unfreeze top 80 layers; E4: proportional
+        epochs: 10                # E2: extend to 25 epochs
+        lr: 0.0001
+  
+  callbacks:
+    early_stopping:
+      monitor: "val_loss"
+      patience: 7
+      restore_best_weights: true
+    reduce_lr:
+      monitor: "val_loss"
+      factor: 0.5
+      patience: 5
+      min_lr: 1.0e-7
+    cosine_decay:
+      t_0: 10
+      t_mul: 2.0
+      alpha: 1.0e-6
+
+augmentation:                     # Note: E1 uses fixed pipeline in train.py (D6)
+  enabled: true                   # Geometric and color augmentations
+  # When enabled (no normalization, handled by model Rescaling layer):
+  horizontal_flip: 0.5
+  vertical_flip: 0.5
+  random_rotate_90: 0.5
+  shift_scale_rotate:
+    shift_limit: 0.15
+    scale_limit: 0.15
+    rotate_limit: 180
+    p: 0.7
+  color_jitter:
+    brightness: 0.2
+    contrast: 0.2
+    saturation: 0.2
+    hue: 0.1
+    p: 0.5
+  coarse_dropout:
+    max_holes: 8
+    max_height: 20
+    max_width: 20
+    p: 0.3
+  gauss_noise:
+    var_limit: [5.0, 25.0]
+    p: 0.2
