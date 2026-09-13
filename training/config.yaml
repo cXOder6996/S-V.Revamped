@@ -10,8 +10,8 @@ data:
   seed: 42           # Base random seed
 
 model:
-  architecture: "EfficientNetB0"  # E4: EfficientNetB0, EfficientNetB3, EfficientNetB4, EfficientNetV2S
-  input_size: [300, 300]          # E3: [224, 224], [300, 300], [380, 380]
+  architecture: "EfficientNetB3"  # [EXPERIMENT E4] Testing optimal architecture for 300x300
+  input_size: [300, 300]          
   num_classes: 7
   pretrained: "imagenet"
   head:
