@@ -10,8 +10,8 @@ data:
   seed: 42           # Base random seed
 
 model:
-  architecture: "EfficientNetB3"  # [EXPERIMENT E4] Testing optimal architecture for 300x300
-  input_size: [300, 300]          
+  architecture: "EfficientNetB0"  # [EXPERIMENT E5] Reverting to optimal B0
+  input_size: [224, 224]          # [EXPERIMENT E5] Reverting to optimal 224
   num_classes: 7
   pretrained: "imagenet"
   head:
@@ -20,7 +20,7 @@ model:
       rate: 0.3
     - type: "Dense"
       units: 7
-      activation: "softmax"
+      activation: "softmax"         
 
 training:
   batch_size: 32
@@ -28,9 +28,9 @@ training:
   initial_lr: 0.001
   loss: "categorical_crossentropy"
   class_weights: true             # E0-E1: false, E2+: true (balanced)
-  label_smoothing: 0.0            # E6a: 0.05 or 0.1
-  focal_loss: false               # E5/E6b: true
-  focal_gamma: 2.0                # E5: focal loss focusing parameter (default 2.0)
+  label_smoothing: 0.1            # [EXPERIMENT E5] Help with calibration
+  focal_loss: true                # [EXPERIMENT E5] Enable Focal Loss
+  focal_gamma: 2.0                # Standard gamma for hard examples
   lr_scheduler: "reduce_lr"       # E7: "reduce_lr" or "cosine"
   
   cosine_decay:                   # E7: CosineDecayRestarts parameters
