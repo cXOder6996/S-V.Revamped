@@ -10,8 +10,8 @@ data:
   seed: 42           # Base random seed
 
 model:
-  architecture: "EfficientNetB0"  # [EXPERIMENT E5] Reverting to optimal B0
-  input_size: [224, 224]          # [EXPERIMENT E5] Reverting to optimal 224
+  architecture: "EfficientNetB0"  # [EXPERIMENT E5] E3 Base Architecture
+  input_size: [300, 300]          # [EXPERIMENT E5] E3 Base Resolution
   num_classes: 7
   pretrained: "imagenet"
   head:
@@ -28,7 +28,7 @@ training:
   initial_lr: 0.001
   loss: "categorical_crossentropy"
   class_weights: true             # E0-E1: false, E2+: true (balanced)
-  label_smoothing: 0.1            # [EXPERIMENT E5] Help with calibration
+  label_smoothing: 0.0            # [EXPERIMENT E5] Explicitly 0 (No label smoothing yet)
   focal_loss: true                # [EXPERIMENT E5] Enable Focal Loss
   focal_gamma: 2.0                # Standard gamma for hard examples
   lr_scheduler: "reduce_lr"       # E7: "reduce_lr" or "cosine"
