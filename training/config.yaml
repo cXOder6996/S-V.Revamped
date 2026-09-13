@@ -43,8 +43,8 @@ training:
   fine_tuning:
     enabled: true                 # Two-stage transfer learning
     phases:
-      - unfreeze_layers: 20       # E2: unfreeze top 80 layers; E4: proportional
-        epochs: 10                # E2: extend to 25 epochs
+      - unfreeze_layers: 80       # E2: unfreeze top 80 layers; E4: proportional
+        epochs: 25                # E2: extend to 25 epochs
         lr: 0.0001
   
   callbacks:
