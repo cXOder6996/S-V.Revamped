@@ -10,8 +10,8 @@ data:
   seed: 42           # Base random seed
 
 model:
-  architecture: "EfficientNetB0"  # [EXPERIMENT E5] E3 Base Architecture
-  input_size: [300, 300]          # [EXPERIMENT E5] E3 Base Resolution
+  architecture: "EfficientNetB0"  # [EXPERIMENT E6] E3 Base: B0 at 300x300
+  input_size: [300, 300]          # [EXPERIMENT E6] E3 Base: 300x300
   num_classes: 7
   pretrained: "imagenet"
   head:
@@ -20,17 +20,17 @@ model:
       rate: 0.3
     - type: "Dense"
       units: 7
-      activation: "softmax"         
+      activation: "softmax"
 
 training:
   batch_size: 32
   optimizer: "adam"
   initial_lr: 0.001
   loss: "categorical_crossentropy"
-  class_weights: true             # E0-E1: false, E2+: true (balanced)
-  label_smoothing: 0.0            # [EXPERIMENT E5] Explicitly 0 (No label smoothing yet)
-  focal_loss: true                # [EXPERIMENT E5] Enable Focal Loss
-  focal_gamma: 2.0                # Standard gamma for hard examples
+  class_weights: true             # E3 base: true (unchanged)
+  label_smoothing: 0.1            # [EXPERIMENT E6] Hypothesis: improves calibration
+  focal_loss: false               # [EXPERIMENT E6] Off — CE only, isolating LS effect
+  focal_gamma: 2.0                # Inactive (focal_loss=false)
   lr_scheduler: "reduce_lr"       # E7: "reduce_lr" or "cosine"
   
   cosine_decay:                   # E7: CosineDecayRestarts parameters
