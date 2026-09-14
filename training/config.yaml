@@ -10,8 +10,8 @@ data:
   seed: 42           # Base random seed
 
 model:
-  architecture: "EfficientNetB0"  # [EXPERIMENT E6] E3 Base: B0 at 300x300
-  input_size: [300, 300]          # [EXPERIMENT E6] E3 Base: 300x300
+  architecture: "EfficientNetB0"  # [EXPERIMENT E7] E2 base: unchanged
+  input_size: [224, 224]          # [EXPERIMENT E7] Reverted to E2 base (224x224). Only delta vs E2 is label_smoothing=0.1
   num_classes: 7
   pretrained: "imagenet"
   head:
@@ -28,8 +28,8 @@ training:
   initial_lr: 0.001
   loss: "categorical_crossentropy"
   class_weights: true             # E3 base: true (unchanged)
-  label_smoothing: 0.1            # [EXPERIMENT E6] Hypothesis: improves calibration
-  focal_loss: false               # [EXPERIMENT E6] Off — CE only, isolating LS effect
+  label_smoothing: 0.1            # [EXPERIMENT E7] Sole variable change vs E2. Testing: does LS preserve E2 Mel recall while improving Macro F1?
+  focal_loss: false               # [EXPERIMENT E7] Off — CE only
   focal_gamma: 2.0                # Inactive (focal_loss=false)
   lr_scheduler: "reduce_lr"       # E7: "reduce_lr" or "cosine"
   
