@@ -31,6 +31,14 @@ model = get_model()
 
 uploaded_file = st.file_uploader("Upload a dermoscopic image...", type=["jpg", "jpeg", "png"])
 
+with st.sidebar:
+    st.header("Inference Settings")
+    use_tta = st.toggle(
+        "Test-Time Augmentation (TTA)",
+        value=True,
+        help="Ensembles 4 geometric perspectives (original, horizontal flip, vertical flip, 90° rotation) to maximize diagnostic accuracy (+1.47% Macro F1 gain)."
+    )
+
 if uploaded_file is not None:
     image = Image.open(uploaded_file).convert("RGB")
     image_np = np.array(image)
@@ -49,7 +57,7 @@ if uploaded_file is not None:
             
         preprocessed_img = preprocess_for_inference(image_np)
         
-        probs = predict(model, preprocessed_img)
+        probs = predict(model, preprocessed_img, use_tta=use_tta)
         predicted_class = int(np.argmax(probs))
         
         formatted_result = format_prediction_result(probs)

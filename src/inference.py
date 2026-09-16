@@ -43,7 +43,11 @@ def load_model(model_path: str = None) -> tf.keras.Model:
     return model
 
 
-def predict(model: tf.keras.Model, preprocessed_image: np.ndarray) -> np.ndarray:
+def predict(
+    model: tf.keras.Model, 
+    preprocessed_image: np.ndarray,
+    use_tta: bool = True
+) -> np.ndarray:
     """
     Generate class probabilities for a preprocessed image.
     
@@ -51,6 +55,9 @@ def predict(model: tf.keras.Model, preprocessed_image: np.ndarray) -> np.ndarray
         model: Loaded Keras model
         preprocessed_image: Image array of shape (1, IMG_SIZE, IMG_SIZE, 3) 
                             with raw [0, 255] float values.
+        use_tta: Whether to apply Test-Time Augmentation (4-view geometric ensemble:
+                 original, horizontal flip, vertical flip, 90-degree rotation).
+                 Validated in Experiment E8 (+0.0147 Macro F1 gain, 1.14x latency ratio).
                             
     Returns:
         1D array of shape (NUM_CLASSES,) containing prediction probabilities.
@@ -64,10 +71,23 @@ def predict(model: tf.keras.Model, preprocessed_image: np.ndarray) -> np.ndarray
             f"Expected input shape {expected_shape}, but got {preprocessed_image.shape}."
         )
         
-    # Model returns shape (1, NUM_CLASSES)
-    probabilities = model.predict(preprocessed_image, verbose=0)
+    if not use_tta:
+        # Single-pass prediction
+        probabilities = model.predict(preprocessed_image, verbose=0)
+        return probabilities[0]
+
+    # Test-Time Augmentation (TTA): 4-view parallel batch inference
+    img = preprocessed_image[0]
+    v_orig  = img
+    v_hflip = np.ascontiguousarray(np.fliplr(img))
+    v_vflip = np.ascontiguousarray(np.flipud(img))
+    v_rot90 = np.ascontiguousarray(np.rot90(img, 3))
     
-    return probabilities[0]
+    aug_stack = np.stack([v_orig, v_hflip, v_vflip, v_rot90], axis=0)
+    probabilities = model.predict(aug_stack, verbose=0)
+    
+    # Average probabilities across the 4 geometric perspectives
+    return np.mean(probabilities, axis=0)
 
 
 class PredictionItem(dict):

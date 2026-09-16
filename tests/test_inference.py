@@ -51,3 +51,22 @@ def test_get_top_k():
     assert np.isclose(top_k[0][1], 0.7)
     assert top_k[1][0] == "df"
     assert np.isclose(top_k[1][1], 0.15)
+
+
+def test_predict_with_and_without_tta():
+    model = MagicMock()
+    # Mock predict return shape for batch of 4 (TTA) and batch of 1 (single-pass)
+    model.predict.side_effect = lambda x, verbose=0: np.ones((len(x), 7)) / 7.0
+    
+    dummy_img = np.zeros((1, 224, 224, 3), dtype=np.float32)
+    
+    # Test single-pass (use_tta=False)
+    probs_single = predict(model, dummy_img, use_tta=False)
+    assert probs_single.shape == (7,)
+    assert np.isclose(probs_single.sum(), 1.0)
+    
+    # Test TTA (use_tta=True, default)
+    probs_tta = predict(model, dummy_img, use_tta=True)
+    assert probs_tta.shape == (7,)
+    assert np.isclose(probs_tta.sum(), 1.0)
+
