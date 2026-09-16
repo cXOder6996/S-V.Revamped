@@ -8,7 +8,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from config import DOMAIN_NOTICE
-from src.preprocessing import validate_image, check_image_quality, preprocess_for_inference
+from src.preprocessing import validate_image, check_image_quality, check_dermoscopic_domain, preprocess_for_inference
 from src.inference import load_model, predict
 from src.postprocessing import format_prediction_result
 from src.explainability import generate_gradcam, validate_gradcam, overlay_gradcam
@@ -51,6 +51,13 @@ if uploaded_file is not None:
             st.error(f"Image validation failed: {validation_msg}")
             st.stop()
             
+        # Check dermoscopic domain (rejects grass, pets, landscapes, non-skin images)
+        is_domain_valid, domain_msg = check_dermoscopic_domain(image_np)
+        if not is_domain_valid:
+            st.error(f"🛑 **Analysis Blocked: Non-Skin / Non-Dermoscopic Image**\n\n{domain_msg}")
+            st.info("💡 **Tip:** SkinVision is designed exclusively for close-up dermoscopy images of skin lesions. Everyday photos, pets, or landscapes cannot be analyzed.")
+            st.stop()
+            
         _, quality_warnings = check_image_quality(image_np)
         for warning in quality_warnings:
             st.warning(f"Image Quality Warning: {warning}")
@@ -63,13 +70,31 @@ if uploaded_file is not None:
         formatted_result = format_prediction_result(probs)
         top_pred = formatted_result["top_prediction"]
         
+        # Hard Abstention Gate: Out-of-Distribution or Unresolvable Ambiguity
+        if formatted_result["abstain_recommended"]:
+            st.error("🛑 **Analysis Blocked: High Uncertainty / Out-of-Distribution Detected**")
+            st.warning(
+                f"**Clinical Safety Protocol Triggered:**\n\n"
+                f"{formatted_result.get('abstain_reason', 'High prediction entropy detected.')}\n\n"
+                f"- **Uncertainty (Entropy):** `{formatted_result['uncertainty']['entropy']:.4f}`\n"
+                f"- **Normalized Entropy:** `{formatted_result['uncertainty']['normalized_entropy'] * 100:.1f}%` (Threshold: 70.0%)\n"
+                f"- **Highest Class Confidence:** `{top_pred['probability'] * 100:.1f}%`\n\n"
+                f"This occurs when an uploaded image does not exhibit standard dermoscopic lesion patterns (such as non-skin objects, animals, or highly corrupted photos) "
+                f"or when the lesion morphology is too ambiguous for the model to distinguish safely.\n\n"
+                f"👉 **Safety Policy:** Automated diagnosis and Grad-CAM visualization are strictly suppressed to prevent medical hallucination. A human dermatologist evaluation is required."
+            )
+            with st.expander("🔬 View Raw Probabilities (Research & Debugging)"):
+                st.caption("Model probability distribution across all 7 lesion categories:")
+                for item in formatted_result["top_k"]:
+                    prob_pct = item["probability"] * 100
+                    st.write(f"**{item['class_name']}** (`{item['class_key']}`): {prob_pct:.2f}%")
+            st.stop()
+
         st.subheader("Prediction Results")
         
         col1, col2 = st.columns(2)
         with col1:
             st.metric(label="Top Prediction", value=f"{top_pred['class_name']} ({top_pred['class_key']})")
-            if formatted_result["abstain_recommended"]:
-                st.error(f"⚠️ {formatted_result.get('abstain_reason', 'The model is highly uncertain about this prediction. Abstention recommended.')}")
                 
         with col2:
             st.metric(label="Confidence", value=f"{top_pred['probability'] * 100:.2f}%")

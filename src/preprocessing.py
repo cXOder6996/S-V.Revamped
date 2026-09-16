@@ -137,3 +137,32 @@ def check_image_quality(image_array: np.ndarray) -> tuple[bool, list[str]]:
         warnings.append(f"Notice: {DOMAIN_NOTICE}")
         
     return passes_quality, warnings
+
+
+def check_dermoscopic_domain(image_array: np.ndarray) -> tuple[bool, str]:
+    """
+    Heuristic check to detect non-dermoscopic / non-skin images (e.g., foliage, pets, landscapes).
+    Dermoscopy skin images have warm tones (melanin & hemoglobin) where red is dominant.
+    
+    Returns:
+        (is_dermoscopic: bool, rejection_reason: str)
+    """
+    if image_array is None or len(image_array.shape) < 3 or image_array.shape[2] < 3:
+        return True, ""
+        
+    rgb = image_array[:, :, :3].astype(np.float32)
+    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
+    
+    # 1. Vegetation / Green Foliage check (Grass/Plants/Outdoor pets)
+    # Human skin under dermoscopy does not have green as the dominant channel.
+    green_dominant_ratio = np.mean((g > r + 15) & (g > b))
+    if green_dominant_ratio > 0.15:
+        return False, f"Image contains significant foliage/grass ({green_dominant_ratio * 100:.1f}% green-dominant pixels). SkinVision only analyzes dermoscopic skin lesions."
+
+    # 2. Open Sky / Deep Blue check
+    blue_dominant_ratio = np.mean((b > r + 20) & (b > g))
+    if blue_dominant_ratio > 0.25:
+        return False, f"Image contains large blue/outdoor background ({blue_dominant_ratio * 100:.1f}% blue-dominant pixels). Please upload a close-up dermoscopic lesion."
+
+    return True, ""
+
