@@ -51,7 +51,7 @@ if uploaded_file is not None:
             st.error(f"Image validation failed: {validation_msg}")
             st.stop()
             
-        quality_warnings = check_image_quality(image_np)
+        _, quality_warnings = check_image_quality(image_np)
         for warning in quality_warnings:
             st.warning(f"Image Quality Warning: {warning}")
             
