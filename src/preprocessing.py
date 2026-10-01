@@ -47,7 +47,7 @@ def preprocess_for_inference(image_array: np.ndarray) -> np.ndarray:
         else:
             img_for_pil = image
         pil_image = Image.fromarray(img_for_pil)
-        pil_image = pil_image.resize(IMG_SIZE, Image.Resampling.LANCZOS)
+        pil_image = pil_image.resize(IMG_SIZE, Image.Resampling.BILINEAR)
         image = np.array(pil_image, dtype=np.float32)
     
     # TF 2.20 / Keras 3 EfficientNetB0 includes an internal Rescaling layer. 

@@ -20,10 +20,11 @@ The model is intended to classify dermoscopy images of skin lesions into one of 
 **Important**: The model is trained strictly on **dermoscopic images only**. The model outputs class probabilities/confidence based on visual similarity to the training classes. It does **not** calculate a clinical "risk level". All evaluations for calibration and confidence derive from the validation split. 
 
 ## Metrics
-*(To be filled after training evaluation)*
-- **Accuracy**: TBA
-- **F1-Score (Macro and Weighted)**: TBA
-- **Precision & Recall per class**: TBA
+*(Based on E8 validation results. Final held-out test evaluation pending execution.)*
+- **Macro-F1**: 72.77%
+- **Overall Accuracy**: ~81.4% (E7 single-pass baseline)
+- **Melanoma Recall**: 69.19%
+- **Precision & Recall per class**: See `experiments/results_table.csv` for detailed progression and class metrics.
 
 ## Limitations
 - **Data Distribution**: The classes `df` (Dermatofibroma) and `vasc` (Vascular Lesions) are statistically unstable due to very low sample counts in the HAM10000 dataset. Predictions and confidence estimates for these classes should be interpreted with caution.

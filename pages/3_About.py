@@ -5,7 +5,7 @@ import sys
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config import MEDICAL_DISCLAIMER
+from config import DISCLAIMER
 
 st.set_page_config(page_title="About - SkinVision", layout="wide")
 st.title("About SkinVision")
@@ -28,4 +28,4 @@ SkinVision is an AI-powered dermatological analysis tool designed to classify sk
 - **Augmentation**: Albumentations
 """)
 
-st.error(f"### Medical Disclaimer\n{MEDICAL_DISCLAIMER}")
+st.error(f"### Medical Disclaimer\n{DISCLAIMER}")

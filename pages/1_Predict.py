@@ -72,18 +72,17 @@ if uploaded_file is not None:
         
         normalized_entropy = formatted_result['uncertainty']['normalized_entropy']
         
-        # Hard Abstention Gate: Out-of-Distribution or Unresolvable Ambiguity
+        # Hard Abstention Gate: Uncalibrated Heuristic Uncertainty
         if formatted_result["abstain_recommended"]:
-            st.error("🛑 **Analysis Blocked: High Uncertainty / Out-of-Distribution Detected**")
+            st.error("⚠️ **Analysis Blocked: High Uncertainty Detected**")
             st.warning(
-                f"**Clinical Safety Protocol Triggered:**\n\n"
+                f"**Heuristic Warning Triggered:**\n\n"
                 f"{formatted_result.get('abstain_reason', 'High prediction entropy detected.')}\n\n"
                 f"- **Uncertainty (Entropy):** `{formatted_result['uncertainty']['entropy']:.4f}`\n"
                 f"- **Normalized Entropy:** `{normalized_entropy * 100:.1f}%` (Threshold: 85.0%)\n"
                 f"- **Highest Class Confidence:** `{top_pred['probability'] * 100:.1f}%`\n\n"
-                f"This occurs when an uploaded image does not exhibit standard dermoscopic lesion patterns (such as non-skin objects, animals) "
-                f"or when the lesion morphology is too outside the distribution for the model to distinguish safely.\n\n"
-                f"👉 **Safety Policy:** Automated diagnosis and Grad-CAM visualization are strictly suppressed to prevent medical hallucination. A human dermatologist evaluation is required."
+                f"This may be because the image is not a dermoscopic skin lesion, or it differs significantly from the training data.\n\n"
+                f"👉 **Note:** Automated diagnosis and Grad-CAM visualization are suppressed for highly uncertain inputs."
             )
             with st.expander("🔬 View Raw Probabilities (Research & Debugging)"):
                 st.caption("Model probability distribution across all 7 lesion categories:")

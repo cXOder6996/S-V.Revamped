@@ -1,7 +1,7 @@
 """
 Offline Test-Time Augmentation (TTA) evaluator — E8 only.
 
-Evaluates a frozen, already-selected model on the validation set using TTA.
+Evaluates a frozen, already-selected model on the held-out test set using TTA.
 NOT integrated into the Streamlit app until E8 passes acceptance criteria:
   - macro-F1 gain >= 0.010 vs single-pass
   - TTA latency < 3x single-pass latency (P50)

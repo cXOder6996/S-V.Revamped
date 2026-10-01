@@ -1,4 +1,4 @@
-experiment_id: "E1"  # Active experiment identifier (E1-E8)
+experiment_id: "E7"  # Active experiment identifier (E1-E8)
 
 data:
   metadata_path: ""  # Set via CLI or env var
