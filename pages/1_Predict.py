@@ -70,6 +70,8 @@ if uploaded_file is not None:
         formatted_result = format_prediction_result(probs)
         top_pred = formatted_result["top_prediction"]
         
+        normalized_entropy = formatted_result['uncertainty']['normalized_entropy']
+        
         # Hard Abstention Gate: Out-of-Distribution or Unresolvable Ambiguity
         if formatted_result["abstain_recommended"]:
             st.error("🛑 **Analysis Blocked: High Uncertainty / Out-of-Distribution Detected**")
@@ -77,10 +79,10 @@ if uploaded_file is not None:
                 f"**Clinical Safety Protocol Triggered:**\n\n"
                 f"{formatted_result.get('abstain_reason', 'High prediction entropy detected.')}\n\n"
                 f"- **Uncertainty (Entropy):** `{formatted_result['uncertainty']['entropy']:.4f}`\n"
-                f"- **Normalized Entropy:** `{formatted_result['uncertainty']['normalized_entropy'] * 100:.1f}%` (Threshold: 70.0%)\n"
+                f"- **Normalized Entropy:** `{normalized_entropy * 100:.1f}%` (Threshold: 85.0%)\n"
                 f"- **Highest Class Confidence:** `{top_pred['probability'] * 100:.1f}%`\n\n"
-                f"This occurs when an uploaded image does not exhibit standard dermoscopic lesion patterns (such as non-skin objects, animals, or highly corrupted photos) "
-                f"or when the lesion morphology is too ambiguous for the model to distinguish safely.\n\n"
+                f"This occurs when an uploaded image does not exhibit standard dermoscopic lesion patterns (such as non-skin objects, animals) "
+                f"or when the lesion morphology is too outside the distribution for the model to distinguish safely.\n\n"
                 f"👉 **Safety Policy:** Automated diagnosis and Grad-CAM visualization are strictly suppressed to prevent medical hallucination. A human dermatologist evaluation is required."
             )
             with st.expander("🔬 View Raw Probabilities (Research & Debugging)"):
@@ -89,6 +91,15 @@ if uploaded_file is not None:
                     prob_pct = item["probability"] * 100
                     st.write(f"**{item['class_name']}** (`{item['class_key']}`): {prob_pct:.2f}%")
             st.stop()
+            
+        # Soft Warning Gate: Clinical Ambiguity
+        elif normalized_entropy > 0.65:
+            st.warning("⚠️ **Low Confidence / Ambiguous Lesion Detected**")
+            st.info(
+                f"The model is uncertain about this lesion (Normalized Entropy: `{normalized_entropy * 100:.1f}%`). "
+                f"This often occurs with borderline cases that exhibit overlapping features across multiple diagnoses. "
+                f"Prediction and Grad-CAM are displayed below for clinician review, but should be interpreted with caution."
+            )
 
         st.subheader("Prediction Results")
         

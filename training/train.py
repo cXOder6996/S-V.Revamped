@@ -188,6 +188,7 @@ class SkinVisionDataGenerator(tf.keras.utils.Sequence):
             candidates = [
                 os.path.join(self.data_dir, f"{img_id}.jpg"),
                 os.path.join(self.data_dir, "images", f"{img_id}.jpg"),
+                os.path.join(self.data_dir, "HAM10000_images", f"{img_id}.jpg"),
                 os.path.join(self.data_dir, "HAM10000_images_part_1", f"{img_id}.jpg"),
                 os.path.join(self.data_dir, "HAM10000_images_part_2", f"{img_id}.jpg"),
             ]

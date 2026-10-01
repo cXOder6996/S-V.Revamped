@@ -72,11 +72,11 @@ def should_abstain(probabilities: np.ndarray, calibration_threshold: float = Non
     # Fallback to conservative uncalibrated defaults
     warning_prefix = "[WARNING: Using uncalibrated default thresholds] "
     
-    if uncertainty['normalized_entropy'] > 0.7:
-        return True, f"{warning_prefix}High uncertainty: normalized entropy ({uncertainty['normalized_entropy']:.3f}) > 0.7"
+    if uncertainty['normalized_entropy'] > 0.85:
+        return True, f"{warning_prefix}High uncertainty: normalized entropy ({uncertainty['normalized_entropy']:.3f}) > 0.85"
         
-    if uncertainty['max_probability'] < 0.3:
-        return True, f"{warning_prefix}Low confidence: max probability ({uncertainty['max_probability']:.3f}) < 0.3"
+    if uncertainty['max_probability'] < 0.25:
+        return True, f"{warning_prefix}Low confidence: max probability ({uncertainty['max_probability']:.3f}) < 0.25"
         
     return False, ""
 
